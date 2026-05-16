@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Accurate CGPA calculator as per IIT-style relative grading (R.7.6 & R.7.10). Handles F, W, L, I, U grades. Free tool for students.">
+    <meta name="keywords" content="CGPA calculator, GPA calculator, IIT grading, relative grading, grade points, semester GPA">
+    <meta name="author" content="Your Name">
+    <meta property="og:title" content="CGPA Calculator | Relative Grading System">
+    <meta property="og:description" content="Calculate semester GPA and cumulative CGPA including F/W/L credits. Based on official regulation.">
+    <meta property="og:type" content="website">
+    <title>CGPA Calculator | IIT-style Relative Grading</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Inter', system-ui, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #e0e8f0 100%);
+            margin: 0;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .main-card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: #0f2b3d;
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+        .header h1 {
+            margin: 0 0 0.25rem;
+            font-weight: 600;
+            font-size: 1.9rem;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.8;
+        }
+        .content {
+            padding: 2rem;
+        }
+        /* Ad container */
+        .ad-container {
+            text-align: center;
+            background: #f9fafc;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin: 1.5rem 0;
+            border: 1px dashed #bbb;
+            font-size: 0.75rem;
+            color: #777;
+        }
+        .grade-table-ref {
+            background: #f8fafc;
+            border-radius: 1.25rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2edf2;
+            overflow-x: auto;
+        }
+        .grade-table-ref table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .grade-table-ref th, .grade-table-ref td {
+            padding: 0.5rem 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid #cbdbe2;
+        }
+        .badge {
+            background: #d1e6f0;
+            border-radius: 40px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0f2b3d;
+            border-left: 5px solid #2c7da0;
+            padding-left: 1rem;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 1.2rem;
+            border: 1px solid #dee6ef;
+            background: white;
+        }
+        .courses-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 450px;
+        }
+        .courses-table th {
+            background: #f1f5f9;
+            padding: 1rem 0.8rem;
+            text-align: left;
+            color: #1e4663;
+        }
+        .courses-table td {
+            padding: 0.9rem 0.8rem;
+            border-bottom: 1px solid #eef2f7;
+        }
+        .credit-input {
+            width: 85px;
+            padding: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid #cbdbe2;
+            text-align: center;
+        }
+        .grade-select {
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            border: 1px solid #cbdbe2;
+            background: white;
+            cursor: pointer;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #9aaebf;
+        }
+        .remove-btn:hover { color: #d9534f; }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 1.5rem 0 1rem;
+        }
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            background: #eef2fa;
+            color: #1f4e6e;
+        }
+        .btn-primary {
+            background: #2c7da0;
+            color: white;
+        }
+        .btn-primary:hover { background: #1f5e7e; }
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            background: #f0f6fa;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            border: 1px solid #e2edf2;
+        }
+        .stat-value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f2b3d;
+        }
+        .cgpa-section {
+            background: #e9f2f7;
+            border-radius: 1.3rem;
+            padding: 1.2rem 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .prev-cgpa-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .prev-field {
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbdbe2;
+            width: 160px;
+        }
+        .result-cgpa {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1b6b4c;
+            background: #e0f0e9;
+            display: inline-block;
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+        }
+        .footer-links {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .footer-links a {
+            color: #2c7da0;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e2f3c;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .cookie-btn {
+            background: #2c7da0;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 700px) {
+            .content { padding: 1.2rem; }
+            .stat-value { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="main-card">
+        <div class="header">
+            <h1>📊 CGPA Calculator</h1>
+            <p>As per R.7.10 & R.7.6 | Relative grading | Handles F/W/L/I/U correctly</p>
+        </div>
+        <div class="content">
+            <!-- Grade reference -->
+            <div class="grade-table-ref">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; margin-bottom:10px;">
+                    <strong>📌 Letter Grade & Grade Points</strong>
+                    <span class="badge">I & U excluded from GPA/CGPA</span>
+                </div>
+                <table>
+                    <thead><tr><th>A</th><th>A-</th><th>B</th><th>B-</th><th>C</th><th>C-</th><th>D</th><th>F</th><th>L</th><th>W</th><th>I</th><th>U</th></tr></thead>
+                    <tbody>
+                        <tr><td>10</td><td>9</td><td>8</td><td>7</td><td>6</td><td>5</td><td>4</td><td>0</td><td>0</td><td>0</td><td>—</td><td>—</td></tr>
+                        <tr style="background:#f8f0e6;"><td colspan="12" style="font-size:0.7rem;">⚠️ F, W, L have 0 points but credits count in denominator. I & U completely excluded.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Ad slot #1 (top) - replace with your AdSense code -->
+            <div class="ad-container" id="adTop">
+                📢 [Advertisement] – Replace this div with your AdSense banner code (e.g., <ins class="adsbygoogle">...)
+            </div>
+
+            <!-- Course table -->
+            <div class="courses-section">
+                <div class="section-title">📚 Semester Courses</div>
+                <div class="table-wrapper">
+                    <table class="courses-table" id="coursesTable">
+                        <thead><tr><th>#</th><th>Credits (Cᵢ)</th><th>Letter Grade</th><th></th></tr></thead>
+                        <tbody id="coursesTbody"></tbody>
+                    </table>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-outline" id="addCourseBtn">+ Add Course</button>
+                    <button class="btn btn-outline" id="resetDefaultBtn">⟳ Reset to Default (5×5 credits, prev=0)</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">📖 Denominator Credits</div><div class="stat-value" id="denomCredits">0.00</div><div style="font-size:0.7rem;">(includes F/W/L)</div></div>
+                <div class="stat-card"><div class="stat-label">⭐ Total Quality Points</div><div class="stat-value" id="totalPoints">0.00</div></div>
+                <div class="stat-card"><div class="stat-label">📈 Semester GPA</div><div class="stat-value" id="semesterGPA">0.00</div></div>
+                <div class="stat-card"><div class="stat-label">📋 Registered Credits</div><div class="stat-value" id="totalRegCredits">0.00</div></div>
+            </div>
+
+            <!-- CGPA with previous -->
+            <div class="cgpa-section">
+                <div class="section-title" style="margin-bottom:0.8rem;">🎓 Cumulative CGPA</div>
+                <div class="prev-cgpa-input">
+                    <div class="input-group"><label>Previous CGPA</label><input type="number" id="prevCgpa" step="0.01" value="0.00" class="prev-field"></div>
+                    <div class="input-group"><label>Previous Credits earned</label><input type="number" id="prevCredits" step="0.5" value="0.00" class="prev-field"></div>
+                    <div class="input-group"><label>📌 Overall CGPA</label><div class="result-cgpa" id="overallCGPA">0.00</div></div>
+                </div>
+                <div class="footnote" style="text-align:left; font-size:0.7rem;">Formula: (prev_CGPA×prev_credits + semester_points) / (prev_credits + semester_denom_credits)</div>
+            </div>
+
+            <!-- Ad slot #2 (bottom) -->
+            <div class="ad-container" id="adBottom">
+                📢 [Advertisement] – Replace with your AdSense code.
+            </div>
+
+            <!-- Footer links (Privacy & About) -->
+            <div class="footer-links">
+                <a href="#" id="privacyLink">Privacy Policy</a> |
+                <a href="#" id="aboutLink">About</a> |
+                <a href="#" id="contactLink">Contact</a>
+            </div>
+            <div class="footnote" style="margin-top:1rem;">
+                ✅ Based on R.7.10 & R.7.6. F, W, L included in denominator; I/U excluded.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cookie consent banner -->
+<div id="cookieBanner" class="cookie-banner" style="display: none;">
+    <span>🍪 This site uses cookies for ads and analytics. By using this site, you agree.</span>
+    <button class="cookie-btn" id="acceptCookies">Accept</button>
+</div>
+
+<script>
+    // Grade mapping
+    const gradePointMap = {
+        'A':10,'A-':9,'B':8,'B-':7,'C':6,'C-':5,'D':4,
+        'F':0,'L':0,'W':0,
+        'I':null,'U':null
+    };
+
+    function getContribution(credits, grade) {
+        if (isNaN(credits) || credits<0) credits=0;
+        const gp = gradePointMap[grade];
+        if (gp === null) return { points:0, denomCredits:0 };
+        return { points: gp*credits, denomCredits: credits };
+    }
+
+    const tbody = document.getElementById('coursesTbody');
+    const addBtn = document.getElementById('addCourseBtn');
+    const resetBtn = document.getElementById('resetDefaultBtn');
+
+    function refreshAll() {
+        const rows = document.querySelectorAll('#coursesTbody .course-row');
+        let denom=0, points=0, regCredits=0;
+        for(let row of rows) {
+            let credits = parseFloat(row.querySelector('.credit-input').value);
+            if(isNaN(credits)) credits=0;
+            let grade = row.querySelector('.grade-select').value;
+            regCredits += credits;
+            let {points:p, denomCredits:d} = getContribution(credits, grade);
+            points += p;
+            denom += d;
+        }
+        denom = Math.round(denom*100)/100;
+        points = Math.round(points*100)/100;
+        regCredits = Math.round(regCredits*100)/100;
+        let gpa = denom>0 ? points/denom : 0;
+        document.getElementById('denomCredits').innerText = denom.toFixed(2);
+        document.getElementById('totalPoints').innerText = points.toFixed(2);
+        document.getElementById('semesterGPA').innerText = gpa.toFixed(2);
+        document.getElementById('totalRegCredits').innerText = regCredits.toFixed(2);
+
+        let prevCGPA = parseFloat(document.getElementById('prevCgpa').value) || 0;
+        let prevCred = parseFloat(document.getElementById('prevCredits').value) || 0;
+        let totalPointsAll = prevCGPA*prevCred + points;
+        let totalCredAll = prevCred + denom;
+        let cgpa = totalCredAll>0 ? totalPointsAll/totalCredAll : 0;
+        document.getElementById('overallCGPA').innerText = cgpa.toFixed(2);
+    }
+
+    function createRow(index, creditsVal, gradeVal) {
+        const tr = document.createElement('tr');
+        tr.className = 'course-row';
+        tr.innerHTML = `
+            <td style="font-weight:500">${index+1}</td>
+            <td><input type="number" step="0.5" min="0" value="${creditsVal}" class="credit-input"></td>
+            <td><select class="grade-select">${['A','A-','B','B-','C','C-','D','F','L','W','I','U'].map(g=>`<option value="${g}" ${g===gradeVal?'selected':''}>${g}</option>`).join('')}</select></td>
+            <td><button class="remove-btn" title="Remove course">🗑️</button></td>
+        `;
+        tr.querySelector('.credit-input').addEventListener('input', refreshAll);
+        tr.querySelector('.grade-select').addEventListener('change', refreshAll);
+        tr.querySelector('.remove-btn').addEventListener('click', () => { tr.remove(); refreshAll(); updateNumbers(); });
+        return tr;
+    }
+
+    function updateNumbers() {
+        document.querySelectorAll('#coursesTbody .course-row').forEach((row,i) => { row.cells[0].innerText = i+1; });
+    }
+
+    function loadCourses(courses) {
+        tbody.innerHTML = '';
+        courses.forEach((c,idx) => tbody.appendChild(createRow(idx, c.credits, c.grade)));
+        refreshAll();
+    }
+
+    function resetDefault() {
+        loadCourses([{credits:5,grade:'A'},{credits:5,grade:'A'},{credits:5,grade:'A'},{credits:5,grade:'A'},{credits:5,grade:'A'}]);
+        document.getElementById('prevCgpa').value = '0.00';
+        document.getElementById('prevCredits').value = '0.00';
+        refreshAll();
+    }
+
+    addBtn.addEventListener('click', () => {
+        let newIdx = document.querySelectorAll('.course-row').length;
+        tbody.appendChild(createRow(newIdx, 3, 'A'));
+        refreshAll();
+        updateNumbers();
+    });
+    resetBtn.addEventListener('click', resetDefault);
+    document.getElementById('prevCgpa').addEventListener('input', refreshAll);
+    document.getElementById('prevCredits').addEventListener('input', refreshAll);
+
+    // Privacy/About modals (simple alerts - replace with actual pages)
+    document.getElementById('privacyLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("Privacy Policy: This tool does not store personal data. Cookies may be used by advertising partners. No user data is collected by us.\n\nFull policy will be hosted at /privacy.html");
+    });
+    document.getElementById('aboutLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("CGPA Calculator based on IIT relative grading rules (R.7.6 & R.7.10). Developed for students to compute GPA including F/W/L grades. Free to use.");
+    });
+
+    // Cookie consent
+    const cookieBanner = document.getElementById('cookieBanner');
+    if (!localStorage.getItem('cookieAccepted')) {
+        cookieBanner.style.display = 'flex';
+    }
+    document.getElementById('acceptCookies').addEventListener('click', () => {
+        localStorage.setItem('cookieAccepted', 'true');
+        cookieBanner.style.display = 'none';
+    });
+
+    // Initialize with 5 courses of 5 credits each, prev=0
+    resetDefault();
+</script>
+</body>
+</html>
